@@ -19,11 +19,11 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable()) // Disable CSRF nếu cần thiết
+        http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users").permitAll() // Cho phép truy cập /users mà không cần đăng nhập
-                        .anyRequest().authenticated()
-                );
+                        .requestMatchers("/").permitAll()
+                        .anyRequest().permitAll())
+                .formLogin(f -> f.disable());
         return http.build();
     }
 }
