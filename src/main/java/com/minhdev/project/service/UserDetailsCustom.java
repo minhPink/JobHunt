@@ -18,8 +18,8 @@ public class UserDetailsCustom implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        com.minhdev.project.domain.User user = this.userService.handleGetUserByUsername(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        com.minhdev.project.domain.User user = this.userService.handleGetUserByUsername(email);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
