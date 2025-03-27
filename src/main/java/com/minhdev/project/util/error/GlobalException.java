@@ -23,7 +23,7 @@ public class GlobalException {
     public ResponseEntity<RestResponse<Object>> handleIdException(Exception exception) {
         RestResponse<Object> restResponse = new RestResponse<Object>();
         restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        restResponse.setMessage("Exception occured");
+        restResponse.setMessage("Exception occurred");
         restResponse.setError(exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
     }

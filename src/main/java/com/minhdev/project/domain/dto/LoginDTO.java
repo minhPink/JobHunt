@@ -3,10 +3,10 @@ package com.minhdev.project.domain.dto;
 import jakarta.validation.constraints.NotBlank;
 
 public class LoginDTO {
-    @NotBlank(message = "email cannot be blank")
+    @NotBlank(message = "Email can't be blank")
     private String email;
 
-    @NotBlank(message = "password cannot be blank")
+    @NotBlank(message = "Password can't be blank")
     private String password;
 
     public String getEmail() {

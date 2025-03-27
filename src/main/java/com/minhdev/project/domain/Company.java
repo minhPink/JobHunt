@@ -1,6 +1,7 @@
 package com.minhdev.project.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotBlank(message = "Name can't be blank")
     private String name;
 
     @Column(columnDefinition = "MEDIUMTEXT")
