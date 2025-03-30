@@ -1,7 +1,11 @@
 package com.minhdev.project.service;
 
 import com.minhdev.project.domain.Company;
+import com.minhdev.project.domain.dto.Meta;
+import com.minhdev.project.domain.dto.ResultPaginationDTO;
 import com.minhdev.project.repository.CompanyRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,8 +23,20 @@ public class CompanyService {
         return this.companyRepository.save(company);
     }
 
-    public List<Company> getAllCompanies() {
-        return this.companyRepository.findAll();
+    public ResultPaginationDTO getAllCompanies(Pageable pageable) {
+        Page<Company> page = companyRepository.findAll(pageable);
+        ResultPaginationDTO paginationDTO = new ResultPaginationDTO();
+        Meta meta = new Meta();
+
+        meta.setPage(page.getNumber() + 1);
+        meta.setPageSize(page.getSize());
+        meta.setPages(page.getTotalPages());
+        meta.setTotal(page.getTotalElements());
+
+        paginationDTO.setMeta(meta);
+        paginationDTO.setResult(page.getContent());
+
+        return paginationDTO;
     }
 
     public Company handleUpdateCompany(Company company) {
