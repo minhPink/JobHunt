@@ -4,15 +4,14 @@ import com.minhdev.project.domain.User;
 import com.minhdev.project.domain.dto.ResultPaginationDTO;
 import com.minhdev.project.service.UserService;
 import com.minhdev.project.util.error.IdInvalidException;
-import org.springframework.data.domain.PageRequest;
+import com.turkraft.springfilter.boot.Filter;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -32,12 +31,9 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<ResultPaginationDTO> getUsers(
-            @RequestParam("current") Optional<String> currentOptional,
-            @RequestParam("pageSize") Optional<String> pageSizeOptional ) {
-        String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
-        String sPageSize = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
-        Pageable pageable = PageRequest.of(Integer.parseInt(sCurrent) - 1, Integer.parseInt(sPageSize));
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetAllUsers(pageable));
+            @Filter Specification<User> spec,
+            Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetAllUsers(spec, pageable));
     }
     @PostMapping("/users")
     public ResponseEntity<User> createNewUser(@RequestBody User request) {

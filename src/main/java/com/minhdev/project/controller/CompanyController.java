@@ -3,15 +3,14 @@ package com.minhdev.project.controller;
 import com.minhdev.project.domain.Company;
 import com.minhdev.project.domain.dto.ResultPaginationDTO;
 import com.minhdev.project.service.CompanyService;
+import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class CompanyController {
@@ -27,12 +26,9 @@ public class CompanyController {
 
     @GetMapping("/companies")
     public ResponseEntity<ResultPaginationDTO> getAllCompanies(
-            @RequestParam("current") Optional<String> currentOptional,
-            @RequestParam("pageSize") Optional<String> pageSizeOptional ) {
-        String sCurrentPage = currentOptional.isPresent() ? currentOptional.get() : "";
-        String sPageSize = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
-        Pageable pageable = PageRequest.of(Integer.parseInt(sCurrentPage) - 1, Integer.parseInt(sPageSize));
-        return ResponseEntity.status(HttpStatus.OK).body(this.companyService.getAllCompanies(pageable));
+            @Filter Specification<Company> spec,
+            Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.companyService.getAllCompanies(spec, pageable));
     }
 
     @PutMapping("/companies")
