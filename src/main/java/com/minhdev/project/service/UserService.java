@@ -1,7 +1,11 @@
 package com.minhdev.project.service;
 
 import com.minhdev.project.domain.User;
+import com.minhdev.project.domain.dto.Meta;
+import com.minhdev.project.domain.dto.ResultPaginationDTO;
 import com.minhdev.project.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +22,20 @@ public class UserService {
         return this.userRepository.findById(id).orElse(null);
     }
 
-    public List<User> handleGetAllUsers() {
-        return this.userRepository.findAll();
+    public ResultPaginationDTO handleGetAllUsers(Pageable pageable) {
+        Page<User> pageUser = this.userRepository.findAll(pageable);
+        ResultPaginationDTO rs = new ResultPaginationDTO();
+        Meta mt = new Meta();
+
+        mt.setPage(pageUser.getNumber());
+        mt.setPageSize(pageUser.getSize());
+        mt.setPages(pageUser.getTotalPages());
+        mt.setTotal(pageUser.getTotalElements());
+
+        rs.setMeta(mt);
+        rs.setResult(pageUser.getContent());
+
+        return rs;
     }
 
     public User handleCreateUser(User user) {
