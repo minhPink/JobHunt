@@ -3,6 +3,7 @@ package com.minhdev.project.controller;
 import com.minhdev.project.domain.User;
 import com.minhdev.project.domain.dto.ResultPaginationDTO;
 import com.minhdev.project.service.UserService;
+import com.minhdev.project.util.annotation.ApiMessage;
 import com.minhdev.project.util.error.IdInvalidException;
 import com.turkraft.springfilter.boot.Filter;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,8 @@ public class UserController {
             Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetAllUsers(spec, pageable));
     }
+
+    @ApiMessage("Fetch all users")
     @PostMapping("/users")
     public ResponseEntity<User> createNewUser(@RequestBody User request) {
         String hashedPassword = this.passwordEncoder.encode(request.getPassword());

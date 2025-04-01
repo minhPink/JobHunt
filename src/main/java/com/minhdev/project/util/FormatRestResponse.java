@@ -1,6 +1,7 @@
 package com.minhdev.project.util;
 
 import com.minhdev.project.domain.RestResponse;
+import com.minhdev.project.util.annotation.ApiMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -34,7 +35,8 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
             return body;
         } else {
             restResponse.setData(body);
-            restResponse.setMessage("Success");
+            ApiMessage message = returnType.getMethodAnnotation(ApiMessage.class);
+            restResponse.setMessage(message != null ? message.value() : "Success");
         }
         return restResponse;
     }
