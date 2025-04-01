@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@RequestMapping("/api/v1")
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -30,6 +31,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(devUser);
     }
 
+    @ApiMessage("Fetch all users")
     @GetMapping("/users")
     public ResponseEntity<ResultPaginationDTO> getUsers(
             @Filter Specification<User> spec,
@@ -37,7 +39,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetAllUsers(spec, pageable));
     }
 
-    @ApiMessage("Fetch all users")
     @PostMapping("/users")
     public ResponseEntity<User> createNewUser(@RequestBody User request) {
         String hashedPassword = this.passwordEncoder.encode(request.getPassword());
