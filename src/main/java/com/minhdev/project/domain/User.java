@@ -2,6 +2,7 @@ package com.minhdev.project.domain;
 
 import com.minhdev.project.util.constant.GenderEnum;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.Instant;
 
@@ -12,16 +13,27 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
+
+    @NotBlank(message = "Email can't be blank")
     private String email;
+
+    @NotBlank(message = "Password can't be blank")
     private String password;
+
     private int age;
+
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
     private String address;
+
     private String refreshToken;
+
     private Instant createdAt;
+
     private Instant updatedAt;
+
     private String createdBy;
+
     private String updatedBy;
 
     public long getId() {
@@ -118,5 +130,15 @@ public class User {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    @PrePersist
+    public void handleBeforePersist() {
+        this.createdAt = Instant.now();
+    }
+
+    @PreUpdate
+    public void handleBeforeUpdate() {
+        this.updatedAt = Instant.now();
     }
 }

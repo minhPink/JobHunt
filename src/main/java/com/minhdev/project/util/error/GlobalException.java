@@ -19,6 +19,7 @@ public class GlobalException {
     @ExceptionHandler(value = {
             UsernameNotFoundException.class,
             BadCredentialsException.class,
+            CustomizeException.class,
     })
     public ResponseEntity<RestResponse<Object>> handleIdException(Exception exception) {
         RestResponse<Object> restResponse = new RestResponse<Object>();
@@ -27,6 +28,7 @@ public class GlobalException {
         restResponse.setError(exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
     }
+
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<RestResponse<Object>> validationException(MethodArgumentNotValidException exception) {

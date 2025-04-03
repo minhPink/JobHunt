@@ -1,11 +1,13 @@
 package com.minhdev.project.controller;
 
 import com.minhdev.project.domain.User;
+import com.minhdev.project.domain.dto.ResCreateUserDTO;
 import com.minhdev.project.domain.dto.ResultPaginationDTO;
 import com.minhdev.project.service.UserService;
 import com.minhdev.project.util.annotation.ApiMessage;
-import com.minhdev.project.util.error.IdInvalidException;
+import com.minhdev.project.util.error.CustomizeException;
 import com.turkraft.springfilter.boot.Filter;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -39,25 +41,46 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetAllUsers(spec, pageable));
     }
 
+    @ApiMessage("Create a new user")
     @PostMapping("/users")
-    public ResponseEntity<User> createNewUser(@RequestBody User request) {
+    public ResponseEntity<ResCreateUserDTO> createNewUser(@Valid @RequestBody User request) throws CustomizeException {
+        String email = request.getEmail();
+        Boolean existsUser = this.userService.handleExistsByEmail(email);
+
+        if (existsUser) {
+            throw new CustomizeException("Email already exists");
+        };
+
         String hashedPassword = this.passwordEncoder.encode(request.getPassword());
         request.setPassword(hashedPassword);
         User devUser = this.userService.handleCreateUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(devUser);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(devUser));
     }
 
+    @ApiMessage("Delete user success")
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable long id) throws IdInvalidException {
-        if (id >= 1500) {
-            throw new IdInvalidException("Id khong duoc lon hon 1500");
+    public ResponseEntity<String> deleteUser(@PathVariable long id) throws CustomizeException {
+        User existingUser = this.userService.handleGetUser(id);
+        if (existingUser == null) {
+            throw new CustomizeException("User does not exist");
         }
+
         this.userService.handleDeleteUser(id);
         return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
     }
 
-    @PutMapping("/users")
-    public ResponseEntity<User> updateUser(@RequestBody User request) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleUpdateUser(request));
-    }
+//    @PutMapping("/users")
+//    public ResponseEntity<ResUpdateUserDTO> updateUser(@RequestBody UpdateUserDTO request) throws IdInvalidException{
+//
+//
+//        ResUpdateUserDTO resUser = new ResUpdateUserDTO();
+//        resUser.setId(id);
+//        resUser.setName(request.getName());
+//        resUser.setAge(request.getAge());
+//        resUser.setGender(request.getGender());
+//        resUser.setAddress(request.getAddress());
+//        resUser.setUpdatedAt(existsUser.getUpdatedAt());
+//        return ResponseEntity.status(HttpStatus.OK).body(resUser);
+//    }
 }
