@@ -60,14 +60,14 @@ public class UserController {
 
     @ApiMessage("Delete user success")
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable long id) throws CustomizeException {
+    public ResponseEntity<Void> deleteUser(@PathVariable long id) throws CustomizeException {
         User existingUser = this.userService.handleGetUser(id);
         if (existingUser == null) {
             throw new CustomizeException("User does not exist");
         }
 
         this.userService.handleDeleteUser(id);
-        return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
 //    @PutMapping("/users")
