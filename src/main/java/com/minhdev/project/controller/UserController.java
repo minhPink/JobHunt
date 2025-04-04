@@ -1,8 +1,7 @@
 package com.minhdev.project.controller;
 
 import com.minhdev.project.domain.User;
-import com.minhdev.project.domain.dto.ResCreateUserDTO;
-import com.minhdev.project.domain.dto.ResultPaginationDTO;
+import com.minhdev.project.domain.dto.*;
 import com.minhdev.project.service.UserService;
 import com.minhdev.project.util.annotation.ApiMessage;
 import com.minhdev.project.util.error.CustomizeException;
@@ -15,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/v1")
@@ -25,20 +26,6 @@ public class UserController {
     public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUser(@PathVariable long id) {
-        User devUser = this.userService.handleGetUser(id);
-        return ResponseEntity.status(HttpStatus.OK).body(devUser);
-    }
-
-    @ApiMessage("Fetch all users")
-    @GetMapping("/users")
-    public ResponseEntity<ResultPaginationDTO> getUsers(
-            @Filter Specification<User> spec,
-            Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetAllUsers(spec, pageable));
     }
 
     @ApiMessage("Create a new user")
@@ -60,7 +47,7 @@ public class UserController {
 
     @ApiMessage("Delete user success")
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable long id) throws CustomizeException {
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) throws CustomizeException {
         User existingUser = this.userService.handleGetUser(id);
         if (existingUser == null) {
             throw new CustomizeException("User does not exist");
@@ -70,17 +57,35 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-//    @PutMapping("/users")
-//    public ResponseEntity<ResUpdateUserDTO> updateUser(@RequestBody UpdateUserDTO request) throws IdInvalidException{
-//
-//
-//        ResUpdateUserDTO resUser = new ResUpdateUserDTO();
-//        resUser.setId(id);
-//        resUser.setName(request.getName());
-//        resUser.setAge(request.getAge());
-//        resUser.setGender(request.getGender());
-//        resUser.setAddress(request.getAddress());
-//        resUser.setUpdatedAt(existsUser.getUpdatedAt());
-//        return ResponseEntity.status(HttpStatus.OK).body(resUser);
-//    }
+    @ApiMessage("Get user success")
+    @GetMapping("/users/{id}")
+    public ResponseEntity<ResUserDTO> getUser(@PathVariable("id") long id) throws CustomizeException{
+        User existUser = this.userService.handleGetUserById(id);
+
+        if (existUser == null) {
+            throw new CustomizeException("User does not exist");
+        }
+
+        User devUser = this.userService.handleGetUser(id);
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertUserToDTO(devUser));
+    }
+
+    @ApiMessage("Fetch all users")
+    @GetMapping("/users")
+    public ResponseEntity<ResultPaginationDTO> getUsers(
+            @Filter Specification<User> spec,
+            Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleGetAllUsers(spec, pageable));
+    }
+
+    @ApiMessage("Update user success")
+    @PutMapping("/users")
+    public ResponseEntity<ResUpdateUserDTO> updateUser(@RequestBody User request) throws CustomizeException{
+        User existUser = this.userService.handleGetUser(request.getId());
+        if (existUser == null) {
+            throw new CustomizeException("User does not exist");
+        }
+        this.userService.handleUpdateUser(request);
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertToResUpdateUserDTO(existUser));
+    }
 }

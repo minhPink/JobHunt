@@ -1,5 +1,6 @@
 package com.minhdev.project.domain;
 
+import com.minhdev.project.util.SecurityUtil;
 import com.minhdev.project.util.constant.GenderEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -135,10 +136,16 @@ public class User {
     @PrePersist
     public void handleBeforePersist() {
         this.createdAt = Instant.now();
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
     }
 
     @PreUpdate
     public void handleBeforeUpdate() {
         this.updatedAt = Instant.now();
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
     }
 }

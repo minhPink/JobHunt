@@ -1,16 +1,17 @@
 package com.minhdev.project.service;
 
 import com.minhdev.project.domain.User;
-import com.minhdev.project.domain.dto.Meta;
-import com.minhdev.project.domain.dto.ResCreateUserDTO;
-import com.minhdev.project.domain.dto.ResultPaginationDTO;
-import com.minhdev.project.domain.dto.UpdateUserDTO;
+import com.minhdev.project.domain.dto.*;
 import com.minhdev.project.repository.UserRepository;
 import com.minhdev.project.util.error.CustomizeException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -24,6 +25,20 @@ public class UserService {
         return this.userRepository.findById(id).orElse(null);
     }
 
+    public ResUserDTO convertUserToDTO(User user) {
+        ResUserDTO resUserDTO = new ResUserDTO();
+        resUserDTO.setId(user.getId());
+        resUserDTO.setName(user.getName());
+        resUserDTO.setEmail(user.getEmail());
+        resUserDTO.setAge(user.getAge());
+        resUserDTO.setGender(user.getGender());
+        resUserDTO.setAddress(user.getAddress());
+        resUserDTO.setCreatedAt(user.getCreatedAt());
+        resUserDTO.setUpdatedAt(user.getUpdatedAt());
+
+        return resUserDTO;
+    }
+
     public ResultPaginationDTO handleGetAllUsers(Specification<User> spec, Pageable pageable) {
         Page<User> pageUser = this.userRepository.findAll(spec, pageable);
         ResultPaginationDTO rs = new ResultPaginationDTO();
@@ -35,7 +50,10 @@ public class UserService {
         mt.setTotal(pageUser.getTotalElements());
 
         rs.setMeta(mt);
-        rs.setResult(pageUser.getContent());
+
+        List<ResUserDTO> listUser = pageUser.getContent().stream().map(this::convertUserToDTO).toList();
+
+        rs.setResult(listUser);
 
         return rs;
     }
@@ -61,21 +79,31 @@ public class UserService {
         this.userRepository.deleteById(id);
     }
 
-    public User handleUpdateUser(UpdateUserDTO updateUserDTOUser) throws CustomizeException {
-        long id = updateUserDTOUser.getId();
-        User updateUser = this.userRepository.findById(id).orElse(null);
-        if (updateUser == null) {
-            throw new CustomizeException("User does not exist");
+    public User handleUpdateUser(User user) {
+        Optional<User> existUser = this.userRepository.findById(user.getId());
+        if (existUser.isPresent()) {
+            User updateUser = existUser.get();
+            updateUser.setName(user.getName());
+            updateUser.setAge(user.getAge());
+            updateUser.setGender(user.getGender());
+            updateUser.setAddress(user.getAddress());
+            return this.userRepository.save(updateUser);
         }
-
-        updateUser.setName(updateUserDTOUser.getName());
-        updateUser.setGender(updateUserDTOUser.getGender());
-        updateUser.setAge(updateUserDTOUser.getAge());
-        updateUser.setAddress(updateUserDTOUser.getAddress());
-
-        return updateUser;
+        return null;
     }
 
+    public ResUpdateUserDTO convertToResUpdateUserDTO(User user) {
+        ResUpdateUserDTO resUser = new ResUpdateUserDTO();
+        resUser.setId(user.getId());
+        resUser.setName(user.getName());
+        resUser.setEmail(user.getEmail());
+        resUser.setAge(user.getAge());
+        resUser.setGender(user.getGender());
+        resUser.setAddress(user.getAddress());
+        resUser.setUpdatedAt(user.getUpdatedAt());
+
+        return resUser;
+    }
 
 
     public User handleGetUserByUsername(String email) {
@@ -84,10 +112,6 @@ public class UserService {
 
     public Boolean handleExistsByEmail(String email) {
         return this.userRepository.existsByEmail(email);
-    }
-
-    public  Boolean handleExistsById(long id) {
-        return this.userRepository.existsById(id);
     }
 
     public User handleGetUserById(long id) {
