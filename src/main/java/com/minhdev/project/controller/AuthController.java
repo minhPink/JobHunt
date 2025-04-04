@@ -1,7 +1,9 @@
 package com.minhdev.project.controller;
 
+import com.minhdev.project.domain.User;
 import com.minhdev.project.domain.dto.LoginDTO;
 import com.minhdev.project.domain.dto.ResLoginDTO;
+import com.minhdev.project.service.UserService;
 import com.minhdev.project.util.SecurityUtil;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
+    private final UserService userService;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil) {
+    public AuthController(
+            AuthenticationManagerBuilder authenticationManagerBuilder,
+            SecurityUtil securityUtil,
+            UserService userService ) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -36,6 +43,16 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         ResLoginDTO resLoginDTO = new ResLoginDTO();
+        User existUser = this.userService.handleGetUserByUsername(loginDTO.getEmail());
+
+        if (existUser != null) {
+            ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
+                    existUser.getId(),
+                    existUser.getEmail(),
+                    existUser.getName());
+            resLoginDTO.setUser(userLogin);
+        }
+
         resLoginDTO.setAccessToken(access_token);
         return ResponseEntity.ok().body(resLoginDTO);
     }
