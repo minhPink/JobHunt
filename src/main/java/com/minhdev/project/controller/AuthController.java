@@ -39,7 +39,7 @@ public class AuthController {
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        String access_token = this.securityUtil.createToken(authentication);
+        String access_token = this.securityUtil.createAccessToken(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         ResLoginDTO resLoginDTO = new ResLoginDTO();
@@ -54,6 +54,7 @@ public class AuthController {
         }
 
         resLoginDTO.setAccessToken(access_token);
+        String refresh_token = this.securityUtil.createRefreshToken(loginDTO.getEmail(), resLoginDTO);
         return ResponseEntity.ok().body(resLoginDTO);
     }
 }
