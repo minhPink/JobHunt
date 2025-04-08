@@ -130,4 +130,27 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                 .body(resLoginDTO);
     }
+
+    @PostMapping("/auth/logout")
+    @ApiMessage("Logout server")
+    public ResponseEntity<Void> logout() throws CustomizeException {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() ?
+                SecurityUtil.getCurrentUserLogin().get() : "";
+
+        if (email.equals("")) {
+            throw new CustomizeException("Error...");
+        }
+
+        this.userService.updateUserToken(null, email);
+
+        ResponseCookie deleteCookie = ResponseCookie
+                .from("refresh_token", null)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                .body(null);
+    }
 }
