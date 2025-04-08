@@ -88,4 +88,10 @@ public class AuthController {
         }
         return ResponseEntity.ok().body(userLogin);
     }
+
+    @GetMapping("/auth/refresh")
+    @ApiMessage("Get new token user")
+    public ResponseEntity<Void> getRefreshToken() {
+        return ResponseEntity.ok().body(null);
+    }
 }
