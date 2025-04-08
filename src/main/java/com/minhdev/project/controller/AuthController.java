@@ -6,6 +6,7 @@ import com.minhdev.project.domain.dto.ResLoginDTO;
 import com.minhdev.project.service.UserService;
 import com.minhdev.project.util.SecurityUtil;
 import com.minhdev.project.util.annotation.ApiMessage;
+import com.minhdev.project.util.error.CustomizeException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -56,7 +58,7 @@ public class AuthController {
             resLoginDTO.setUser(userLogin);
         }
 
-        String access_token = this.securityUtil.createAccessToken(authentication, resLoginDTO);
+        String access_token = this.securityUtil.createAccessToken(authentication.getName(), resLoginDTO);
         resLoginDTO.setAccessToken(access_token);
         String refresh_token = this.securityUtil.createRefreshToken(loginDTO.getEmail(), resLoginDTO);
 
@@ -65,7 +67,6 @@ public class AuthController {
         ResponseCookie responseCookie = ResponseCookie
                 .from("refresh_token", refresh_token)
                 .httpOnly(true)
-                .secure(true)
                 .path("/")
                 .maxAge(refreshTokenExpiration)
                 .build();
@@ -91,7 +92,42 @@ public class AuthController {
 
     @GetMapping("/auth/refresh")
     @ApiMessage("Get new token user")
-    public ResponseEntity<Void> getRefreshToken() {
-        return ResponseEntity.ok().body(null);
+    public ResponseEntity<ResLoginDTO> getRefreshToken(
+            @CookieValue(name = "refresh_token") String refresh_token
+    ) throws CustomizeException{
+        Jwt decodeToken = this.securityUtil.checkValidRefreshToken(refresh_token);
+        String email = decodeToken.getSubject();
+
+        User currentUser = this.userService.getUserByRefreshTokenAndEmail(refresh_token, email);
+        if (currentUser == null) {
+            throw new CustomizeException("Error...");
+        }
+
+        ResLoginDTO resLoginDTO = new ResLoginDTO();
+        User existUser = this.userService.handleGetUserByUsername(email);
+
+        if (existUser != null) {
+            ResLoginDTO.UserLogin userLogin = new ResLoginDTO.UserLogin(
+                    existUser.getId(),
+                    existUser.getEmail(),
+                    existUser.getName());
+            resLoginDTO.setUser(userLogin);
+        }
+
+        String access_token = this.securityUtil.createAccessToken(email, resLoginDTO);
+        resLoginDTO.setAccessToken(access_token);
+        String new_refresh_token = this.securityUtil.createRefreshToken(email, resLoginDTO);
+
+        this.userService.updateUserToken(new_refresh_token, email);
+
+        ResponseCookie responseCookie = ResponseCookie
+                .from("refresh_token", new_refresh_token)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(refreshTokenExpiration)
+                .build();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .body(resLoginDTO);
     }
 }
