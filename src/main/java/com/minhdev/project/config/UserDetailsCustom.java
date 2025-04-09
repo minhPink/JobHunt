@@ -1,5 +1,6 @@
-package com.minhdev.project.service;
+package com.minhdev.project.config;
 
+import com.minhdev.project.service.UserService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
