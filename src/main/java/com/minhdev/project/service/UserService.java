@@ -1,10 +1,12 @@
 package com.minhdev.project.service;
 
+import com.minhdev.project.domain.Company;
 import com.minhdev.project.domain.User;
 import com.minhdev.project.domain.response.ResCreateUserDTO;
 import com.minhdev.project.domain.response.ResUpdateUserDTO;
 import com.minhdev.project.domain.response.ResUserDTO;
 import com.minhdev.project.domain.response.ResultPaginationDTO;
+import com.minhdev.project.repository.CompanyRepository;
 import com.minhdev.project.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +19,11 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CompanyRepository companyRepository) {
         this.userRepository = userRepository;
+        this.companyRepository = companyRepository;
     }
 
     public User handleGetUser(long id) {
@@ -60,11 +64,18 @@ public class UserService {
     }
 
     public User handleCreateUser(User user) {
+
+        if (user.getCompany() != null) {
+            Optional<Company> companyOptional = this.companyRepository.findById(user.getCompany().getId());
+            user.setCompany(companyOptional.isPresent() == true ? companyOptional.get() : null);
+        }
         return this.userRepository.save(user);
     }
 
     public ResCreateUserDTO convertToResCreateUserDTO(User user) {
         ResCreateUserDTO resUser = new ResCreateUserDTO();
+        ResCreateUserDTO.CompanyUser companyUser = new ResCreateUserDTO.CompanyUser();
+
         resUser.setId(user.getId());
         resUser.setName(user.getName());
         resUser.setEmail(user.getEmail());
@@ -72,6 +83,12 @@ public class UserService {
         resUser.setGender(user.getGender());
         resUser.setAddress(user.getAddress());
         resUser.setCreatedAt(user.getCreatedAt());
+
+        if (user.getCompany() != null) {
+            companyUser.setId(user.getCompany().getId());
+            companyUser.setName(user.getCompany().getName());
+            resUser.setCompanyUser(companyUser);
+        }
 
         return resUser;
     }
