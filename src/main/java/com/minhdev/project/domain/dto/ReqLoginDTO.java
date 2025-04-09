@@ -2,7 +2,7 @@ package com.minhdev.project.domain.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class LoginDTO {
+public class ReqLoginDTO {
     @NotBlank(message = "Email can't be blank")
     private String email;
 

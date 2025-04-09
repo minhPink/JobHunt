@@ -1,7 +1,7 @@
 package com.minhdev.project.controller;
 
 import com.minhdev.project.domain.User;
-import com.minhdev.project.domain.dto.LoginDTO;
+import com.minhdev.project.domain.dto.ReqLoginDTO;
 import com.minhdev.project.domain.dto.ResLoginDTO;
 import com.minhdev.project.service.UserService;
 import com.minhdev.project.util.SecurityUtil;
@@ -39,7 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
 
