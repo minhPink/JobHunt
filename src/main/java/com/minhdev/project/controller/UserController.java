@@ -1,7 +1,10 @@
 package com.minhdev.project.controller;
 
 import com.minhdev.project.domain.User;
-import com.minhdev.project.domain.dto.*;
+import com.minhdev.project.domain.response.ResCreateUserDTO;
+import com.minhdev.project.domain.response.ResUpdateUserDTO;
+import com.minhdev.project.domain.response.ResUserDTO;
+import com.minhdev.project.domain.response.ResultPaginationDTO;
 import com.minhdev.project.service.UserService;
 import com.minhdev.project.util.annotation.ApiMessage;
 import com.minhdev.project.util.error.CustomizeException;
@@ -13,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 
 @RestController

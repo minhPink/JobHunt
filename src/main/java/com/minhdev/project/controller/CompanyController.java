@@ -1,7 +1,7 @@
 package com.minhdev.project.controller;
 
 import com.minhdev.project.domain.Company;
-import com.minhdev.project.domain.dto.ResultPaginationDTO;
+import com.minhdev.project.domain.response.ResultPaginationDTO;
 import com.minhdev.project.service.CompanyService;
 import com.minhdev.project.util.annotation.ApiMessage;
 import com.turkraft.springfilter.boot.Filter;

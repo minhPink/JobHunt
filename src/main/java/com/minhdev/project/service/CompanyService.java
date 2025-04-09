@@ -1,15 +1,13 @@
 package com.minhdev.project.service;
 
 import com.minhdev.project.domain.Company;
-import com.minhdev.project.domain.dto.Meta;
-import com.minhdev.project.domain.dto.ResultPaginationDTO;
+import com.minhdev.project.domain.response.ResultPaginationDTO;
 import com.minhdev.project.repository.CompanyRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,7 +25,7 @@ public class CompanyService {
     public ResultPaginationDTO getAllCompanies(Specification<Company> spec,Pageable pageable) {
         Page<Company> page = companyRepository.findAll(spec, pageable);
         ResultPaginationDTO paginationDTO = new ResultPaginationDTO();
-        Meta meta = new Meta();
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
 
         meta.setPage(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());

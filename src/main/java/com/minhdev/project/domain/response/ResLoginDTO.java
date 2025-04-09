@@ -1,4 +1,4 @@
-package com.minhdev.project.domain.dto;
+package com.minhdev.project.domain.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

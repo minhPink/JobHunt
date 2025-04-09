@@ -1,8 +1,8 @@
 package com.minhdev.project.controller;
 
 import com.minhdev.project.domain.User;
-import com.minhdev.project.domain.dto.ReqLoginDTO;
-import com.minhdev.project.domain.dto.ResLoginDTO;
+import com.minhdev.project.domain.request.ReqLoginDTO;
+import com.minhdev.project.domain.response.ResLoginDTO;
 import com.minhdev.project.service.UserService;
 import com.minhdev.project.util.SecurityUtil;
 import com.minhdev.project.util.annotation.ApiMessage;

@@ -1,9 +1,11 @@
 package com.minhdev.project.service;
 
 import com.minhdev.project.domain.User;
-import com.minhdev.project.domain.dto.*;
+import com.minhdev.project.domain.response.ResCreateUserDTO;
+import com.minhdev.project.domain.response.ResUpdateUserDTO;
+import com.minhdev.project.domain.response.ResUserDTO;
+import com.minhdev.project.domain.response.ResultPaginationDTO;
 import com.minhdev.project.repository.UserRepository;
-import com.minhdev.project.util.error.CustomizeException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -42,7 +43,7 @@ public class UserService {
     public ResultPaginationDTO handleGetAllUsers(Specification<User> spec, Pageable pageable) {
         Page<User> pageUser = this.userRepository.findAll(spec, pageable);
         ResultPaginationDTO rs = new ResultPaginationDTO();
-        Meta mt = new Meta();
+        ResultPaginationDTO.Meta mt = new ResultPaginationDTO.Meta();
 
         mt.setPage(pageable.getPageNumber() + 1);
         mt.setPageSize(pageable.getPageSize());
