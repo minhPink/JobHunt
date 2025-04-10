@@ -105,20 +105,24 @@ public class UserService {
     }
 
     public User handleUpdateUser(User user) {
+        if (user.getCompany() != null) {
+            Optional<Company> companyOptional = this.companyService.getCompany(user.getCompany().getId());
+            user.setCompany(companyOptional.isPresent() == true ? companyOptional.get() : null);
+        }
         Optional<User> existUser = this.userRepository.findById(user.getId());
-        if (existUser.isPresent()) {
             User updateUser = existUser.get();
             updateUser.setName(user.getName());
             updateUser.setAge(user.getAge());
             updateUser.setGender(user.getGender());
             updateUser.setAddress(user.getAddress());
+            updateUser.setCompany(user.getCompany());
             return this.userRepository.save(updateUser);
-        }
-        return null;
     }
 
     public ResUpdateUserDTO convertToResUpdateUserDTO(User user) {
         ResUpdateUserDTO resUser = new ResUpdateUserDTO();
+        ResUpdateUserDTO.CompanyUser companyUser = new ResUpdateUserDTO.CompanyUser();
+
         resUser.setId(user.getId());
         resUser.setName(user.getName());
         resUser.setEmail(user.getEmail());
@@ -126,6 +130,12 @@ public class UserService {
         resUser.setGender(user.getGender());
         resUser.setAddress(user.getAddress());
         resUser.setUpdatedAt(user.getUpdatedAt());
+
+        if (user.getCompany() != null) {
+            companyUser.setId(user.getCompany().getId());
+            companyUser.setName(user.getCompany().getName());
+            resUser.setCompanyUser(companyUser);
+        }
 
         return resUser;
     }
