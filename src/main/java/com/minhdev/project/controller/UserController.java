@@ -68,7 +68,7 @@ public class UserController {
         }
 
         User devUser = this.userService.handleGetUser(id);
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertUserToDTO(devUser));
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.convertToResUserToDTO(devUser));
     }
 
     @ApiMessage("Fetch all users")

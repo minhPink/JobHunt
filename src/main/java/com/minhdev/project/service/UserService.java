@@ -6,7 +6,6 @@ import com.minhdev.project.domain.response.ResCreateUserDTO;
 import com.minhdev.project.domain.response.ResUpdateUserDTO;
 import com.minhdev.project.domain.response.ResUserDTO;
 import com.minhdev.project.domain.response.ResultPaginationDTO;
-import com.minhdev.project.repository.CompanyRepository;
 import com.minhdev.project.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,19 +18,27 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final CompanyRepository companyRepository;
+    private final CompanyService companyService;
 
-    public UserService(UserRepository userRepository, CompanyRepository companyRepository) {
+    public UserService(UserRepository userRepository, CompanyService companyService) {
         this.userRepository = userRepository;
-        this.companyRepository = companyRepository;
+        this.companyService = companyService;
     }
 
     public User handleGetUser(long id) {
         return this.userRepository.findById(id).orElse(null);
     }
 
-    public ResUserDTO convertUserToDTO(User user) {
+    public ResUserDTO convertToResUserToDTO(User user) {
         ResUserDTO resUserDTO = new ResUserDTO();
+        ResUserDTO.CompanyUser companyUserDTO = new ResUserDTO.CompanyUser();
+
+        if (user.getCompany() != null) {
+            companyUserDTO.setId(user.getCompany().getId());
+            companyUserDTO.setName(user.getCompany().getName());
+            resUserDTO.setCompanyUser(companyUserDTO);
+        }
+
         resUserDTO.setId(user.getId());
         resUserDTO.setName(user.getName());
         resUserDTO.setEmail(user.getEmail());
@@ -56,7 +63,7 @@ public class UserService {
 
         rs.setMeta(mt);
 
-        List<ResUserDTO> listUser = pageUser.getContent().stream().map(this::convertUserToDTO).toList();
+        List<ResUserDTO> listUser = pageUser.getContent().stream().map(this::convertToResUserToDTO).toList();
 
         rs.setResult(listUser);
 
@@ -66,7 +73,7 @@ public class UserService {
     public User handleCreateUser(User user) {
 
         if (user.getCompany() != null) {
-            Optional<Company> companyOptional = this.companyRepository.findById(user.getCompany().getId());
+            Optional<Company> companyOptional = this.companyService.getCompany(user.getCompany().getId());
             user.setCompany(companyOptional.isPresent() == true ? companyOptional.get() : null);
         }
         return this.userRepository.save(user);
