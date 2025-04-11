@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.minhdev.project.util.SecurityUtil;
 import com.minhdev.project.util.constant.LevelEnum;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +21,9 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name can't be blank")
     private String name;
+
     private String location;
     private double salary;
     private int quantity;
