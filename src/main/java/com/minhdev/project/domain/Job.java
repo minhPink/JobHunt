@@ -1,6 +1,7 @@
 package com.minhdev.project.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.minhdev.project.util.SecurityUtil;
 import com.minhdev.project.util.constant.LevelEnum;
 import jakarta.persistence.*;
@@ -31,7 +32,7 @@ public class Job {
 
     private Instant startDate;
     private Instant endDate;
-    private Instant isActive;
+    private boolean active;
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;
@@ -42,7 +43,7 @@ public class Job {
     private Company company;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"jobs"})
     @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "job_id"),
     inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private List<Skill> skills;

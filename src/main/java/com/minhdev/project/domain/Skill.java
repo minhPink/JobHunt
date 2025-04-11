@@ -3,6 +3,7 @@ package com.minhdev.project.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.minhdev.project.util.SecurityUtil;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,7 @@ public class Skill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name can't be blank")
     private String name;
 
     private Instant createdAt;
