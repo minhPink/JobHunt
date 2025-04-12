@@ -1,57 +1,40 @@
 package com.minhdev.project.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.minhdev.project.util.SecurityUtil;
-import com.minhdev.project.util.constant.GenderEnum;
+import com.minhdev.project.util.constant.Status;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.List;
 
+@Entity
+@Table(name = "resumes")
 @Getter
 @Setter
-@Entity
-@Table(name = "users")
-public class User {
+public class Resume {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String name;
+    private Long id;
 
-    @NotBlank(message = "Email can't be blank")
     private String email;
-
-    @NotBlank(message = "Password can't be blank")
-    private String password;
-
-    private int age;
+    private String url;
 
     @Enumerated(EnumType.STRING)
-    private GenderEnum gender;
-
-    private String address;
-
-    @Column(columnDefinition = "MEDIUMTEXT")
-    private String refreshToken;
+    private Status status;
 
     private Instant createdAt;
-
     private Instant updatedAt;
-
     private String createdBy;
-
     private String updatedBy;
 
     @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @JsonIgnore
-    List<Resume> resumes;
+    @ManyToOne
+    @JoinColumn(name = "job_id")
+    private Job job;
 
     @PrePersist
     public void handleBeforePersist() {
