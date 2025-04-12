@@ -2,9 +2,9 @@ package com.minhdev.project.service;
 
 import com.minhdev.project.domain.Company;
 import com.minhdev.project.domain.User;
-import com.minhdev.project.domain.response.ResCreateUserDTO;
-import com.minhdev.project.domain.response.ResUpdateUserDTO;
-import com.minhdev.project.domain.response.ResUserDTO;
+import com.minhdev.project.domain.response.user.ResCreateUserDTO;
+import com.minhdev.project.domain.response.user.ResUpdateUserDTO;
+import com.minhdev.project.domain.response.user.ResUserDTO;
 import com.minhdev.project.domain.response.ResultPaginationDTO;
 import com.minhdev.project.repository.UserRepository;
 import org.springframework.data.domain.Page;

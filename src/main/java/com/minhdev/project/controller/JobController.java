@@ -1,8 +1,8 @@
 package com.minhdev.project.controller;
 
 import com.minhdev.project.domain.Job;
-import com.minhdev.project.domain.response.ResCreateJobDTO;
-import com.minhdev.project.domain.response.ResUpdateJobDTO;
+import com.minhdev.project.domain.response.job.ResCreateJobDTO;
+import com.minhdev.project.domain.response.job.ResUpdateJobDTO;
 import com.minhdev.project.domain.response.ResultPaginationDTO;
 import com.minhdev.project.service.JobService;
 import com.minhdev.project.util.annotation.ApiMessage;

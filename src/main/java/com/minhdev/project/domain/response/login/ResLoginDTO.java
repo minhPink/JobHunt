@@ -1,4 +1,4 @@
-package com.minhdev.project.domain.response;
+package com.minhdev.project.domain.response.login;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

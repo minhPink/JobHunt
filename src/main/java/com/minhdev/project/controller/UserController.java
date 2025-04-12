@@ -1,9 +1,9 @@
 package com.minhdev.project.controller;
 
 import com.minhdev.project.domain.User;
-import com.minhdev.project.domain.response.ResCreateUserDTO;
-import com.minhdev.project.domain.response.ResUpdateUserDTO;
-import com.minhdev.project.domain.response.ResUserDTO;
+import com.minhdev.project.domain.response.user.ResCreateUserDTO;
+import com.minhdev.project.domain.response.user.ResUpdateUserDTO;
+import com.minhdev.project.domain.response.user.ResUserDTO;
 import com.minhdev.project.domain.response.ResultPaginationDTO;
 import com.minhdev.project.service.UserService;
 import com.minhdev.project.util.annotation.ApiMessage;

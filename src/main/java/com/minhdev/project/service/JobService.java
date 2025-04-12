@@ -2,8 +2,8 @@ package com.minhdev.project.service;
 
 import com.minhdev.project.domain.Job;
 import com.minhdev.project.domain.Skill;
-import com.minhdev.project.domain.response.ResCreateJobDTO;
-import com.minhdev.project.domain.response.ResUpdateJobDTO;
+import com.minhdev.project.domain.response.job.ResCreateJobDTO;
+import com.minhdev.project.domain.response.job.ResUpdateJobDTO;
 import com.minhdev.project.domain.response.ResultPaginationDTO;
 import com.minhdev.project.repository.JobRepository;
 import com.minhdev.project.repository.SkillRepository;

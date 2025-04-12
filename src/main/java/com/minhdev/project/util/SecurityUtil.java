@@ -1,6 +1,6 @@
 package com.minhdev.project.util;
 
-import com.minhdev.project.domain.response.ResLoginDTO;
+import com.minhdev.project.domain.response.login.ResLoginDTO;
 import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;

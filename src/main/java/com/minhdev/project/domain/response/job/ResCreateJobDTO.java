@@ -1,4 +1,4 @@
-package com.minhdev.project.domain.response;
+package com.minhdev.project.domain.response.job;
 
 import com.minhdev.project.util.constant.LevelEnum;
 import lombok.Getter;
