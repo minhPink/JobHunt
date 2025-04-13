@@ -3,6 +3,7 @@ package com.minhdev.project.domain;
 import com.minhdev.project.util.SecurityUtil;
 import com.minhdev.project.util.constant.Status;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +18,10 @@ public class Resume {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Email can't be blank")
     private String email;
+
+    @NotBlank(message = "URL can't be blank")
     private String url;
 
     @Enumerated(EnumType.STRING)
