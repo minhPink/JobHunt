@@ -1,6 +1,7 @@
 package com.minhdev.project.service;
 
 import com.minhdev.project.domain.Company;
+import com.minhdev.project.domain.Role;
 import com.minhdev.project.domain.User;
 import com.minhdev.project.domain.response.user.ResCreateUserDTO;
 import com.minhdev.project.domain.response.user.ResUpdateUserDTO;
@@ -19,10 +20,12 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final CompanyService companyService;
+    private final RoleService roleService;
 
-    public UserService(UserRepository userRepository, CompanyService companyService) {
+    public UserService(UserRepository userRepository, CompanyService companyService, RoleService roleService) {
         this.userRepository = userRepository;
         this.companyService = companyService;
+        this.roleService = roleService;
     }
 
     public User handleGetUser(long id) {
@@ -32,11 +35,18 @@ public class UserService {
     public ResUserDTO convertToResUserToDTO(User user) {
         ResUserDTO resUserDTO = new ResUserDTO();
         ResUserDTO.CompanyUser companyUserDTO = new ResUserDTO.CompanyUser();
+        ResUserDTO.RoleUser roleUser = new ResUserDTO.RoleUser();
 
         if (user.getCompany() != null) {
             companyUserDTO.setId(user.getCompany().getId());
             companyUserDTO.setName(user.getCompany().getName());
             resUserDTO.setCompanyUser(companyUserDTO);
+        }
+
+        if (user.getRole() != null) {
+            roleUser.setId(user.getRole().getId());
+            roleUser.setName(user.getRole().getName());
+            resUserDTO.setRoleUser(roleUser);
         }
 
         resUserDTO.setId(user.getId());
@@ -76,12 +86,18 @@ public class UserService {
             Optional<Company> companyOptional = this.companyService.getCompany(user.getCompany().getId());
             user.setCompany(companyOptional.isPresent() == true ? companyOptional.get() : null);
         }
+
+        if (user.getRole() != null) {
+            Role role = this.roleService.findById(user.getRole().getId());
+            user.setRole(role != null ? role : null);
+        }
         return this.userRepository.save(user);
     }
 
     public ResCreateUserDTO convertToResCreateUserDTO(User user) {
         ResCreateUserDTO resUser = new ResCreateUserDTO();
         ResCreateUserDTO.CompanyUser companyUser = new ResCreateUserDTO.CompanyUser();
+        ResCreateUserDTO.RoleUser roleUser = new ResCreateUserDTO.RoleUser();
 
         resUser.setId(user.getId());
         resUser.setName(user.getName());
@@ -97,6 +113,12 @@ public class UserService {
             resUser.setCompanyUser(companyUser);
         }
 
+        if (user.getRole() != null) {
+            roleUser.setId(user.getRole().getId());
+            roleUser.setName(user.getRole().getName());
+            resUser.setRoleUser(roleUser);
+        }
+
         return resUser;
     }
 
@@ -109,6 +131,12 @@ public class UserService {
             Optional<Company> companyOptional = this.companyService.getCompany(user.getCompany().getId());
             user.setCompany(companyOptional.isPresent() == true ? companyOptional.get() : null);
         }
+
+        if (user.getRole() != null) {
+            Role role = this.roleService.findById(user.getRole().getId());
+            user.setRole(role != null ? role : null);
+        }
+
         Optional<User> existUser = this.userRepository.findById(user.getId());
             User updateUser = existUser.get();
             updateUser.setName(user.getName());
@@ -116,12 +144,14 @@ public class UserService {
             updateUser.setGender(user.getGender());
             updateUser.setAddress(user.getAddress());
             updateUser.setCompany(user.getCompany());
+            updateUser.setRole(user.getRole());
             return this.userRepository.save(updateUser);
     }
 
     public ResUpdateUserDTO convertToResUpdateUserDTO(User user) {
         ResUpdateUserDTO resUser = new ResUpdateUserDTO();
         ResUpdateUserDTO.CompanyUser companyUser = new ResUpdateUserDTO.CompanyUser();
+        ResUpdateUserDTO.RoleUser roleUser = new ResUpdateUserDTO.RoleUser();
 
         resUser.setId(user.getId());
         resUser.setName(user.getName());
@@ -135,6 +165,12 @@ public class UserService {
             companyUser.setId(user.getCompany().getId());
             companyUser.setName(user.getCompany().getName());
             resUser.setCompanyUser(companyUser);
+        }
+
+        if (user.getRole() != null) {
+            roleUser.setId(user.getRole().getId());
+            roleUser.setName(user.getRole().getName());
+            resUser.setRoleUser(roleUser);
         }
 
         return resUser;

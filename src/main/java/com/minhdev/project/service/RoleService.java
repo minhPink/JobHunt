@@ -82,4 +82,8 @@ public class RoleService {
 
         return rs;
     }
+
+    public Role findById(Long id){
+        return this.roleRepository.findById(id).get();
+    }
 }

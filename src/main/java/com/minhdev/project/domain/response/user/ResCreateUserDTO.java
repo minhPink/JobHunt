@@ -17,10 +17,18 @@ public class ResCreateUserDTO {
     private String address;
     private Instant createdAt;
     private CompanyUser companyUser;
+    private RoleUser roleUser;
 
     @Getter
     @Setter
     public static class CompanyUser {
+        private long id;
+        private String name;
+    }
+
+    @Getter
+    @Setter
+    public static class RoleUser {
         private long id;
         private String name;
     }

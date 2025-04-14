@@ -1,5 +1,6 @@
 package com.minhdev.project.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.minhdev.project.util.SecurityUtil;
 import jakarta.persistence.*;
@@ -34,6 +35,10 @@ public class Role {
     @JoinTable(name = "permission_role", joinColumns = @JoinColumn(name = "role_id"),
     inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private List<Permission> permissions;
+
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<User> users;
 
     @PrePersist
         public void handleBeforePersist() {
