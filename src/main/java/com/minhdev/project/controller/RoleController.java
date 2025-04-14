@@ -38,10 +38,6 @@ public class RoleController {
             throw new CustomizeException("Role does not exist");
         }
 
-        if (this.roleService.existsByName(role.getName())) {
-            throw new CustomizeException("Role already exists");
-        }
-
         return ResponseEntity.ok().body(this.roleService.update(role));
     }
 
