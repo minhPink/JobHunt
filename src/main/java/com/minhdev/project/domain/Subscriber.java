@@ -1,6 +1,6 @@
 package com.minhdev.project.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.minhdev.project.util.SecurityUtil;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -11,10 +11,10 @@ import java.time.Instant;
 import java.util.List;
 
 @Entity
-@Table(name = "skills")
+@Table(name = "subscribers")
 @Getter
 @Setter
-public class Skill {
+public class Subscriber {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,18 +22,18 @@ public class Skill {
     @NotBlank(message = "Name can't be blank")
     private String name;
 
+    @NotBlank(message = "Name can't be blank")
+    private String email;
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "skills")
-    @JsonIgnore
-    private List<Job> jobs;
-
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "skills")
-    @JsonIgnore
-    List<Subscriber> subscribers;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = "subscribers")
+    @JoinTable(name = "subscriber_skill", joinColumns = @JoinColumn(name = "subscriber_id")
+    , inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    private List<Skill> skills;
 
     @PrePersist
     public void handleBeforePersist() {
