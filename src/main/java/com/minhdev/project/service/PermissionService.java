@@ -75,4 +75,13 @@ public class PermissionService {
         return rs;
     }
 
+    public boolean isSameName(Permission permission) {
+        Permission permissionToCheck = this.fetchById(permission.getId());
+        if (permissionToCheck != null) {
+            if (permissionToCheck.getName().equals(permission.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

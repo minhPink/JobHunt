@@ -39,7 +39,9 @@ public class PermissionController {
         }
 
         if (this.permissionService.isPermissionExists(permission)) {
-            throw new CustomizeException("Permission already exists");
+            if (this.permissionService.isSameName(permission)) {
+                throw new CustomizeException("Permission already exists");
+            }
         }
         return ResponseEntity.ok().body(this.permissionService.update(permission));
     }

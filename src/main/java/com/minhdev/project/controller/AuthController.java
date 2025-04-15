@@ -3,6 +3,7 @@ package com.minhdev.project.controller;
 import com.minhdev.project.domain.User;
 import com.minhdev.project.domain.request.ReqLoginDTO;
 import com.minhdev.project.domain.response.login.ResLoginDTO;
+import com.minhdev.project.domain.response.user.ResCreateUserDTO;
 import com.minhdev.project.service.UserService;
 import com.minhdev.project.util.SecurityUtil;
 import com.minhdev.project.util.annotation.ApiMessage;
@@ -10,12 +11,14 @@ import com.minhdev.project.util.error.CustomizeException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +28,7 @@ public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${minh.jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
@@ -32,13 +36,33 @@ public class AuthController {
     public AuthController(
             AuthenticationManagerBuilder authenticationManagerBuilder,
             SecurityUtil securityUtil,
-            UserService userService ) {
+            UserService userService,
+            PasswordEncoder passwordEncoder) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @PostMapping("/auth/register")
+    @ApiMessage("Register a new user")
+    public ResponseEntity<ResCreateUserDTO> registerNewUser(@Valid @RequestBody User request) throws CustomizeException {
+        String email = request.getEmail();
+        Boolean existsUser = this.userService.handleExistsByEmail(email);
+
+        if (existsUser) {
+            throw new CustomizeException("Email already exists");
+        };
+
+        String hashedPassword = this.passwordEncoder.encode(request.getPassword());
+        request.setPassword(hashedPassword);
+        User devUser = this.userService.handleCreateUser(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUserDTO(devUser));
     }
 
     @PostMapping("/auth/login")
+    @ApiMessage("Login a user")
     public ResponseEntity<ResLoginDTO> login(@Valid @RequestBody ReqLoginDTO loginDTO) {
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());

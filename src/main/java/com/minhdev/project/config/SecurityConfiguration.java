@@ -40,6 +40,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
         String[] whitelist = {
                 "/",
+                "/api/v1/auth/register",
                 "/api/v1/auth/login",
                 "/api/v1/auth/refresh",
                 "/api/v1/auth/companies/**",

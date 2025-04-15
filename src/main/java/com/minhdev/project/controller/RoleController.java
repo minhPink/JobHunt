@@ -58,4 +58,16 @@ public class RoleController {
             Pageable pageable) {
         return ResponseEntity.ok().body(this.roleService.fetchRoles(spec, pageable));
     }
+
+    @GetMapping("/roles/{id}")
+    @ApiMessage("Fetch role by id")
+    public ResponseEntity<Role> getRoleById(@PathVariable Long id) throws CustomizeException {
+        Role role = this.roleService.findById(id);
+
+        if (role == null) {
+            throw new CustomizeException("Role does not exist");
+        }
+
+        return ResponseEntity.ok().body(role);
+    }
 }
