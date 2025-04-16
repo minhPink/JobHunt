@@ -18,6 +18,17 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalException {
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<RestResponse<Object>> handleAllException (Exception ex) {
+        RestResponse<Object> res = new RestResponse<Object>();
+        res.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        res.setError("Internal Server Error");
+        res.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+    }
+
+
     @ExceptionHandler(value = {
             MissingRequestCookieException.class,
             UsernameNotFoundException.class,
@@ -27,8 +38,8 @@ public class GlobalException {
     public ResponseEntity<RestResponse<Object>> handleIdException(Exception exception) {
         RestResponse<Object> restResponse = new RestResponse<Object>();
         restResponse.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        restResponse.setMessage("Exception occurred");
-        restResponse.setError(exception.getMessage());
+        restResponse.setMessage(exception.getMessage());
+        restResponse.setError("Exception occurred");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
     }
 
@@ -38,8 +49,8 @@ public class GlobalException {
     public ResponseEntity<RestResponse<Object>> handleNoResourceFoundException(Exception exception) {
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.NOT_FOUND.value());
-        res.setError(exception.getMessage());
-        res.setMessage("404 Not Found");
+        res.setError("404 Not Found");
+        res.setMessage(exception.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }
 
