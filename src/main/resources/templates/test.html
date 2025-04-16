@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>@Minh2k3 JobHunt</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+
+    <h3>Danh sách công việc:</h3>
+    <ul>
+        <li th:each="job : ${jobs}">
+            <strong th:text="${job.name}">Tên công việc</strong> -
+<!--            <span th:text="${job.company.name}">Tên công ty</span>-->
+
+            <div>
+                <span th:text="${job.salary}">Lương</span> Đ
+            </div>
+
+            <div th:each="skill : ${job.skills}">
+                <span th:text="${skill.name}">Kỹ năng</span>
+            </div>
+        </li>
+    </ul>
+
+</body>
+</html>

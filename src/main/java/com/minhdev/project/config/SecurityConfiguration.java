@@ -44,16 +44,17 @@ public class SecurityConfiguration {
                 "/api/v1/auth/register",
                 "/api/v1/auth/login",
                 "/api/v1/auth/refresh",
-                "/storage/**"
+                "/storage/**",
+                "/api/v1/email/**"
         };
 
         http.csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(whitelist).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/companies").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/jobs").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/skills").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/companies/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/jobs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/skills/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))

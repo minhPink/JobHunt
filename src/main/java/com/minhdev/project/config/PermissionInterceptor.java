@@ -36,6 +36,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
 
         String email = SecurityUtil.getCurrentUserLogin().isPresent() == true
                 ? SecurityUtil.getCurrentUserLogin().get() : "";
+        System.out.println("email=" + email);
 
         if (email != null && !email.isEmpty()) {
             User user = this.userService.handleGetUserByUsername(email);
